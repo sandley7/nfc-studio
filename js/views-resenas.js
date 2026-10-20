@@ -38,6 +38,8 @@
   App.views.resenas = function () {
     const S = App.S;
     const t = App._t;
+    const manual = !Nfc.supported(); // sin Web NFC (iPhone, PC): la escritura se hace con NFC Tools
+    const ios = Nfc.isIOS();
     const reviewCards = () => S.cards.filter(isResena).sort((a, b) => (b.programmedAt || b.createdAt || 0) - (a.programmedAt || a.createdAt || 0));
     const currentCard = () => (form.id ? S.cards.find((k) => k.id === form.id) : null);
     let curUrl = '';
@@ -94,11 +96,13 @@
         touch(); toast('Tarjeta «' + c.name + '» escrita ✓ Ahora pruébala (paso 4)'); renderAll(); update();
       }
     } }, '📲 Escribir en tarjeta');
-    const manualBtn = h('button', { class: 'btn', onclick: () => {
+    const copyBtn3 = h('button', { class: 'btn primary', onclick: async () => toast((await U.copy(curUrl)) ? 'Enlace copiado ✓ Ahora ábrelo en NFC Tools' : 'No se pudo copiar') }, '📋 Copiar enlace');
+    const serialIn = h('input', { type: 'text', placeholder: 'Opcional: número de serie (ej. 04:A1:B2:C3:D4:E5:F6)', autocapitalize: 'off', autocorrect: 'off', spellcheck: 'false', 'aria-label': 'Número de serie de la tarjeta' });
+    const manualBtn = h('button', { class: ios || manual ? 'btn primary' : 'btn', onclick: () => {
       const x = parsed();
       if (!x.url) return;
       const c = save();
-      App.cards.markProgrammed(c.name, x.url, '');
+      App.cards.markProgrammed(c.name, x.url, serialIn.value.trim());
       c.tested = null;
       t.pushLog(c.name + ' — ' + (form.business.trim() || 'reseña'), x.url, 'manual');
       touch(); toast('Marcada como escrita ✓ Ahora pruébala (paso 4)'); renderAll();
@@ -134,7 +138,7 @@
       linkNote.textContent = form.input
         ? (x.url ? '✓ ' + [x.info, x.warn].filter(Boolean).join(' ') + ' Toca "Probar enlace" y comprueba que abre el negocio correcto.' : x.warn)
         : '';
-      [copyBtn, testLinkBtn, saveBtn, manualBtn].forEach((b) => b.toggleAttribute('disabled', !x.url));
+      [copyBtn, copyBtn3, testLinkBtn, saveBtn, manualBtn].forEach((b) => b.toggleAttribute('disabled', !x.url));
       writeBtn.toggleAttribute('disabled', !x.url || !Nfc.supported());
       qr.hidden = !x.url || !App.drawQr(qr, x.url);
     }
@@ -153,7 +157,8 @@
       testBox.replaceChildren(
         h('ol', { class: 'steps' },
           h('li', null, 'Toma un celular que ', h('b', null, 'no'), ' sea el que usaste para escribir (o aleja y vuelve a acercar el mismo).'),
-          h('li', null, 'Desbloquea la pantalla y acerca la parte de atrás del celular a la tarjeta. En iPhone, hacia la parte de arriba del teléfono. Los iPhone XS o más nuevos leen sin abrir ninguna app.'),
+          h('li', null, 'Desbloquea la pantalla y acerca la tarjeta: en Android, a la parte de atrás del celular; en iPhone, a la parte de arriba.'),
+          h('li', null, h('b', null, 'iPhone XS o más nuevo'), ' (según Apple): la lee sin abrir ninguna app y muestra una notificación arriba; tócala para abrir el enlace. Si pide desbloquear, desbloquea primero. En un iPhone más antiguo la lectura sin app no está garantizada: prueba con otro celular.'),
           h('li', null, 'Debe abrirse ', h('b', null, 'Google Maps con el negocio correcto'), ' y se deben ver las ', h('b', null, '5 estrellas'), ' para calificar. Toca las estrellas para comprobar que se puede calificar.'),
           h('li', null, 'Si el celular no tiene NFC, prueba con la cámara y el QR de respaldo del paso 2.')),
         !written ? h('div', { class: 'note warn' }, 'Primero escribe la tarjeta (paso 3).') : null,
@@ -209,6 +214,9 @@
     const view = h('div', null,
       title('Reseñas', 'Tarjetas que llevan al cliente a Google Maps para calificar con estrellas y dejar su opinión.'),
       t.cardDatalist(),
+      manual ? h('div', { class: 'note warn' }, ios
+        ? '📱 Estás en iPhone: los pasos 1, 2, 4 y 5 se hacen en esta pantalla. El paso 3 (escribir en la tarjeta) se hace con NFC Tools, porque Safari no puede escribir NFC.'
+        : 'Este equipo no escribe NFC desde la web. Los pasos 1, 2, 4 y 5 se hacen aquí; el paso 3 se hace con NFC Tools en un celular.') : null,
       h('div', { class: 'card' }, h('h3', null, '⭐ Cómo funciona'),
         h('ol', { class: 'steps' },
           h('li', null, 'El cliente acerca su celular a la tarjeta (o escanea el QR de respaldo).'),
@@ -238,10 +246,20 @@
           h('p', { class: 'sub', style: 'margin:0 0 8px' }, 'Imprímelo o pégalo junto a la tarjeta: la cámara del celular lo abre.'), qr)),
 
       h('div', { class: 'card' }, h('h3', null, 'Paso 3 · Escribe el enlace en la tarjeta'),
-        h('div', { class: 'btns' }, writeBtn, manualBtn),
-        t.unsupportedNote('escribir')
-          ? h('div', { class: 'note' }, h('b', null, 'En iPhone: '), '1) toca "Copiar enlace" en el paso 2; 2) abre NFC Tools → ', h('code', null, 'Escribir → Añadir un registro → URL/URI'),
-            ' → pega → Escribir; 3) acerca la tarjeta a la parte de arriba del iPhone; 4) vuelve y toca "Ya la escribí con NFC Tools".')
+        manual ? null : h('div', { class: 'btns' }, writeBtn, manualBtn),
+        manual
+          ? h('div', null,
+            h('div', { class: 'note' }, h('b', null, ios ? '📱 Modo iPhone. ' : 'Este equipo no puede escribir NFC desde la web. '),
+              'La escritura se hace con la app gratuita ', h('b', null, 'NFC Tools'), ' (de WAKDEV). Esta pantalla te guía y lleva la cuenta de tus tarjetas.'),
+            h('ol', { class: 'steps' },
+              h('li', null, h('b', null, 'Instala NFC Tools '), '(una sola vez): búscala en la App Store como "NFC Tools", de WAKDEV (',
+                h('a', { href: 'https://www.wakdev.com/en/apps/nfc-tools-ios.html', target: '_blank', rel: 'noopener' }, 'ficha oficial'), '). Según WAKDEV, el iPhone puede escribir NFC desde iOS 13.'),
+              h('li', null, h('b', null, 'Copia el enlace: '), copyBtn3),
+              h('li', null, h('b', null, 'Abre NFC Tools '), '→ pestaña ', h('b', null, 'Escribir'), ' → ', h('b', null, 'Añadir un registro'), ' → ', h('b', null, 'URL/URI'),
+                ' → toca el cuadro y ', h('b', null, 'pega'), ' el enlace (iOS puede preguntar "Permitir pegar": acepta) → ', h('b', null, 'Aceptar'), '.'),
+              h('li', null, 'Toca ', h('b', null, 'Escribir'), ' y acerca la ', h('b', null, 'parte de arriba del iPhone'), ' a la tarjeta. Sin funda gruesa y sin mover la tarjeta hasta que NFC Tools diga que terminó.'),
+              h('li', null, h('b', null, 'Comprueba lo escrito '), '(recomendado): en NFC Tools → ', h('b', null, 'Leer'), ', acerca la tarjeta; debe mostrar tu enlace. Ahí aparece también el número de serie (UID); si quieres, cópialo aquí para reconocer esta tarjeta después:', serialIn),
+              h('li', null, 'Vuelve aquí y toca: ', manualBtn)))
           : h('div', null, t.optionsRow(),
             h('ul', { class: 'steps' },
               h('li', null, h('b', null, 'Verificar después de escribir: '), 'vuelve a leer la tarjeta y compara con lo escrito; además guarda su número de serie para reconocerla después.'),

@@ -1,7 +1,7 @@
 // Service worker de altoke.pe.
 // - Archivos propios: primero red (así ves los cambios apenas vuelves a subir la app), y si no hay internet, copia guardada.
 // - Generador de QR (cdnjs): copia guardada primero.
-const V = 'altoke-v6';
+const V = 'altoke-v7';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest',
   'js/util.js', 'js/store.js', 'js/zip.js', 'js/site.js', 'js/nfc.js', 'js/core.js',

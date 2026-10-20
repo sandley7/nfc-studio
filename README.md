@@ -19,7 +19,7 @@ Después de la primera carga funciona sin internet. En el Menú hay un QR para p
 
 ## Qué incluye
 
-- **⭐ Reseñas (lo principal):** módulo aparte para configurar cada tarjeta paso a paso: nombre de la tarjeta → negocio y enlace de Google Maps → escribir → probar como cliente → entregar y cobrar. El cliente toca la tarjeta, se abre el negocio en Google Maps y califica con las 5 estrellas. Incluye la lista de tus tarjetas de reseñas con su estado, QR de respaldo y un mensaje de WhatsApp para pedirle el enlace al dueño.
+- **⭐ Reseñas (lo principal):** módulo aparte para configurar cada tarjeta paso a paso: nombre de la tarjeta → negocio y enlace de Google Maps → escribir → probar como cliente → entregar y cobrar. El cliente toca la tarjeta, se abre el negocio en Google Maps y califica con las 5 estrellas. Incluye la lista de tus tarjetas de reseñas con su estado, QR de respaldo y un mensaje de WhatsApp para pedirle el enlace al dueño. **Modo iPhone:** como Safari no puede escribir NFC, el paso 3 se convierte en una guía con NFC Tools (instalar, copiar el enlace, escribirlo y comprobarlo) y la app lleva la cuenta, incluido el número de serie si lo copias.
 - **🏠 Menú:** todas las funciones de NFC Tools explicadas, con ejemplos y con su estado en esta app (disponible, experimental o no disponible en web). Con buscador.
 - **⚡ Venta rápida:** pega el enlace de Google Maps, de reseña o el Place ID del cliente, programa la tarjeta, cobra (Yape, Plin, efectivo) y registra la venta. Stock, ventas del día y CSV.
 - **📇 Mis tarjetas:** nombre de cada tarjeta física (lotes, "Mesa 1…12"), estado en stock / programada / vendida, cliente y notas.
