@@ -18,7 +18,7 @@
     log: [],
     cards: [], // inventario: cada tarjeta física con su nombre
     restaurants: [],
-    ui: { view: 'inicio', rid: null },
+    ui: { view: 'resenas', rid: null },
   });
 
   App.touch = function touch() {
@@ -41,7 +41,7 @@
     S.shop = Object.assign(defaultState().shop, S.shop);
     S.ui = Object.assign(defaultState().ui, S.ui);
     ['sales', 'tasks', 'log', 'cards', 'restaurants'].forEach((k) => { if (!Array.isArray(S[k])) S[k] = []; });
-    if (!['inicio', 'venta', 'tarjetas', 'leer', 'escribir', 'otros', 'tareas', 'restaurantes', 'carta', 'vista', 'publicar', 'ayuda'].includes(S.ui.view)) S.ui.view = 'inicio';
+    if (!['inicio', 'resenas', 'venta', 'tarjetas', 'leer', 'escribir', 'otros', 'tareas', 'restaurantes', 'carta', 'vista', 'publicar', 'ayuda'].includes(S.ui.view)) S.ui.view = 'inicio';
     App.S = S;
   };
 
@@ -144,10 +144,11 @@
   /* ---------- Navegación ---------- */
   const NAV = [
     ['inicio', '🏠', 'Menú', ''],
-    ['venta', '⚡', 'Venta rápida', 'Tarjetas'], ['tarjetas', '📇', 'Mis tarjetas', 'Tarjetas'], ['leer', '📡', 'Leer', 'Tarjetas'],
-    ['escribir', '✍️', 'Escribir', 'Tarjetas'], ['otros', '🧰', 'Otros', 'Tarjetas'], ['tareas', '📁', 'Mis tareas', 'Tarjetas'],
-    ['restaurantes', '🍴', 'Restaurantes', 'Negocio'], ['carta', '📖', 'Carta', 'Negocio'], ['vista', '📱', 'Vista previa', 'Negocio'],
-    ['publicar', '🚀', 'Publicar', 'Negocio'], ['ayuda', '❓', 'Ayuda', ''],
+    ['resenas', '⭐', 'Reseñas', 'Reseñas (lo principal)'], ['venta', '⚡', 'Venta rápida', 'Reseñas (lo principal)'], ['tarjetas', '📇', 'Mis tarjetas', 'Reseñas (lo principal)'],
+    ['leer', '📡', 'Leer', 'Herramientas NFC'], ['escribir', '✍️', 'Escribir', 'Herramientas NFC'], ['otros', '🧰', 'Otros', 'Herramientas NFC'], ['tareas', '📁', 'Mis tareas', 'Herramientas NFC'],
+    ['restaurantes', '🍴', 'Restaurantes', 'Menús digitales (para después)'], ['carta', '📖', 'Carta', 'Menús digitales (para después)'],
+    ['vista', '📱', 'Vista previa', 'Menús digitales (para después)'], ['publicar', '🚀', 'Publicar', 'Menús digitales (para después)'],
+    ['ayuda', '❓', 'Ayuda', ''],
   ];
 
   function renderNav() {

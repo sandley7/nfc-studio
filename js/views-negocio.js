@@ -84,17 +84,17 @@
                 r.logo ? h('button', { class: 'btn small danger', onclick: () => { r.logo = null; touch(); App.render(); } }, 'Quitar') : null,
                 logoInput)))),
         h('div', { class: 'card' }, h('h3', null, 'Contacto y reseñas'),
-          field('Enlace de reseña de Google', bind(r, 'reviewUrl', { type: 'url', placeholder: 'https://g.page/r/…/review' }, checkRev),
-            'Desde una computadora: business.google.com → Leer reseñas → Consigue más reseñas → Copiar. O usa el Place ID aquí abajo.'),
+          field('Enlace de Google Maps o de reseña', bind(r, 'reviewUrl', { type: 'url', placeholder: 'https://maps.app.goo.gl/…' }, checkRev),
+            'Lo más fácil: en la app de Google Maps abre el negocio → Compartir → copiar enlace. El cliente verá la ficha con las estrellas. También sirve el enlace directo de reseña o un Place ID (abajo).'),
           revNote,
           h('div', { class: 'row' },
             field('Place ID (alternativa)', placeIn),
-            h('div', { class: 'shrink', style: 'padding-bottom:12px' },
-              h('button', { class: 'btn', onclick: () => {
-                const id = placeIn.value.trim();
-                if (!/^[A-Za-z0-9_-]{15,}$/.test(id)) return toast('Place ID no válido');
-                r.reviewUrl = 'https://search.google.com/local/writereview?placeid=' + id; touch(); App.render(); toast('Enlace creado');
-              } }, 'Crear enlace'))),
+            h('div', { class: 'shrink btns', style: 'padding-bottom:12px' },
+              [['Enlace de Maps', 'maps'], ['Reseña directa', 'direct']].map(([label, mode]) => h('button', { class: 'btn', onclick: () => {
+                const x = Nfc.reviewFromInput(placeIn.value, { mode, name: r.name });
+                if (!x.url || x.kind === '') return toast('Place ID no válido');
+                r.reviewUrl = x.url; touch(); App.render(); toast('Enlace creado ✓');
+              } }, label)))),
           h('div', { class: 'grid2' },
             field('WhatsApp', bind(r, 'whatsapp', { type: 'tel', placeholder: '987654321' }), 'Solo el número; se agrega +51 automáticamente.'),
             field('Mensaje inicial de WhatsApp', bind(r, 'waMessage'))),

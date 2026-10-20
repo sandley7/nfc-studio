@@ -1,11 +1,11 @@
 // Service worker de altoke.pe.
 // - Archivos propios: primero red (así ves los cambios apenas vuelves a subir la app), y si no hay internet, copia guardada.
 // - Generador de QR (cdnjs): copia guardada primero.
-const V = 'altoke-v5';
+const V = 'altoke-v6';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest',
   'js/util.js', 'js/store.js', 'js/zip.js', 'js/site.js', 'js/nfc.js', 'js/core.js',
-  'js/views-negocio.js', 'js/views-tarjetas.js', 'js/views-cards.js', 'js/views-menu.js', 'js/main.js',
+  'js/views-negocio.js', 'js/views-tarjetas.js', 'js/views-cards.js', 'js/views-resenas.js', 'js/views-menu.js', 'js/main.js',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'icon.svg', 'logo.svg',
 ];
 

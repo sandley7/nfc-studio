@@ -62,18 +62,36 @@
     return '+' + d;
   };
 
-  // Enlace de reseña desde lo que pegue el usuario: enlace g.page/…, enlace de reseña o Place ID
-  N.reviewFromInput = (v) => {
+  // Enlace de reseña desde lo que pegue el usuario: enlace de Google Maps (botón Compartir), enlace directo de reseña o Place ID.
+  // opts.mode: 'maps' (ficha del negocio en Google Maps, donde se ven y se tocan las estrellas; por defecto) | 'direct' (ventana de reseña directa)
+  // opts.name: nombre del negocio (Google lo exige como "query" al abrir un Place ID en Maps)
+  N.reviewFromInput = (v, opts) => {
+    opts = opts || {};
+    const mode = opts.mode === 'direct' ? 'direct' : 'maps';
     v = String(v || '').trim();
-    if (!v) return { url: '', warn: '' };
+    const none = (warn) => ({ url: '', warn: warn || '', info: '', kind: '' });
+    if (!v) return none();
     if (/^https?:\/\//i.test(v) || /^(g\.page|maps\.app\.goo\.gl|goo\.gl|search\.google\.com|(www\.)?google\.[a-z.]+)\//i.test(v)) {
       const u = U.safeUrl(/^https?:/i.test(v) ? v : 'https://' + v);
-      if (!u) return { url: '', warn: 'Enlace no válido' };
-      const maps = /maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps/i.test(u);
-      return { url: u, warn: maps ? 'Este enlace abre la ficha del negocio en Maps, no directo la ventana de reseña: el cliente puede necesitar un toque más. Lo ideal es el Place ID o el enlace de reseña.' : '' };
+      if (!u) return none('Enlace no válido');
+      if (/maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps/i.test(u)) {
+        return { url: u, warn: '', info: 'Enlace de Google Maps: el cliente verá la ficha del negocio con las estrellas y toca para calificar.', kind: 'maps' };
+      }
+      return { url: u, warn: '', info: /review|writereview/i.test(u) ? 'Enlace directo a la ventana de reseña.' : '', kind: 'direct' };
     }
-    if (/^[A-Za-z0-9_-]{20,}$/.test(v)) return { url: 'https://search.google.com/local/writereview?placeid=' + v, warn: '' };
-    return { url: '', warn: 'No parece un enlace ni un Place ID' };
+    if (/^[A-Za-z0-9_-]{20,}$/.test(v)) {
+      if (mode === 'direct') {
+        return { url: 'https://search.google.com/local/writereview?placeid=' + v, warn: '', info: 'Abrirá directo la ventana de reseña.', kind: 'direct' };
+      }
+      const name = String(opts.name || '').trim();
+      return {
+        url: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name || 'negocio') + '&query_place_id=' + v,
+        warn: name ? '' : 'Escribe el nombre del negocio: Google lo usa de respaldo si no reconoce el Place ID.',
+        info: 'Abrirá la ficha del negocio en Google Maps, con las estrellas.',
+        kind: 'maps',
+      };
+    }
+    return none('No parece un enlace ni un Place ID');
   };
 
   const vEsc = (s) => String(s).replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
@@ -108,9 +126,13 @@
   N.KINDS = {
     review: {
       icon: '⭐', label: 'Reseña de Google',
-      fields: [{ k: 'a', label: 'Enlace o Place ID', ph: 'https://g.page/r/…/review  o  ChIJ…' }],
+      fields: [
+        { k: 'a', label: 'Enlace de Google Maps, de reseña o Place ID', ph: 'https://maps.app.goo.gl/…  ·  https://g.page/r/…  ·  ChIJ…' },
+        { k: 'c', label: 'Nombre del negocio (respaldo del enlace de Maps)' },
+        { k: 'b', label: 'Si pegas un Place ID, al tocar la tarjeta abrir', type: 'select', options: [['maps', 'Ficha de Google Maps con las estrellas'], ['direct', 'Ventana de reseña directa']] },
+      ],
       build: (r) => {
-        const x = N.reviewFromInput(r.a);
+        const x = N.reviewFromInput(r.a, { mode: r.b === 'direct' ? 'direct' : 'maps', name: r.c });
         return x.url ? Object.assign(urlRec(x.url), { warn: x.warn }) : { error: x.warn || 'Falta el enlace o Place ID' };
       },
     },

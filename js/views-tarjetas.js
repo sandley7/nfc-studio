@@ -5,7 +5,7 @@
 
   const prefs = { lock: false, verify: true };
   const draft = { records: [], chip: 'ntag213', written: 0, auto: true, cardName: '' };
-  const venta = { input: '', client: '', qty: 1, price: '', method: 'Yape', cardName: '' };
+  const venta = { input: '', client: '', qty: 1, price: '', method: 'Yape', cardName: '', mode: 'maps' };
   let lastRead = null;
   let lastSerial = ''; // número de serie de la última tarjeta escrita y verificada
   const readHistory = [];
@@ -87,7 +87,7 @@
     const totalTxt = h('b');
 
     const input = h('input', { type: 'text', value: venta.input, inputmode: 'url', autocapitalize: 'off', autocorrect: 'off', spellcheck: 'false',
-      placeholder: 'Pega el enlace de reseña o el Place ID', oninput: (e) => { venta.input = e.target.value; update(); } });
+      placeholder: 'Pega el enlace de Google Maps, de reseña o el Place ID', oninput: (e) => { venta.input = e.target.value; update(); } });
     const copyBtn = h('button', { class: 'btn primary', onclick: async () => toast((await U.copy(curUrl)) ? 'Enlace copiado ✓' : 'No se pudo copiar') }, '📋 Copiar enlace');
     const testBtn = h('button', { class: 'btn', onclick: () => window.open(curUrl, '_blank', 'noopener') }, '🔗 Probar enlace');
     const cardIn = h('input', { type: 'text', list: 'cardnames', value: venta.cardName, placeholder: App.cards.suggest(), autocapitalize: 'off',
@@ -102,7 +102,10 @@
       }
     } }, '📲 Escribir en tarjeta');
 
-    const client = h('input', { type: 'text', value: venta.client, placeholder: 'Nombre del negocio', oninput: (e) => { venta.client = e.target.value; } });
+    const client = h('input', { type: 'text', value: venta.client, placeholder: 'Ej. Pollería Rey', oninput: (e) => { venta.client = e.target.value; update(); } });
+    const modeSel = h('select', { value: venta.mode, onchange: (e) => { venta.mode = e.target.value; update(); } },
+      [['maps', 'Ficha de Google Maps con las estrellas (recomendado)'], ['direct', 'Ventana de reseña directa']].map(([v, l]) => h('option', { value: v }, l)));
+    const modeWrap = field('Al tocar la tarjeta, abrir', modeSel, 'Solo aplica cuando pegas un Place ID.');
     const qty = h('input', { type: 'number', min: 1, max: 99, value: venta.qty, oninput: (e) => { venta.qty = e.target.value; update(); } });
     const price = h('input', { type: 'text', inputmode: 'decimal', value: venta.price, placeholder: String(shop.price), oninput: (e) => { venta.price = e.target.value; update(); } });
     const method = h('select', { value: venta.method, onchange: (e) => { venta.method = e.target.value; } },
@@ -111,11 +114,14 @@
     const unit = () => U.price(venta.price === '' ? shop.price : venta.price);
 
     function update() {
-      const x = Nfc.reviewFromInput(venta.input);
+      const x = Nfc.reviewFromInput(venta.input, { mode: venta.mode, name: venta.client });
       curUrl = x.url;
       urlIn.value = x.url;
+      modeWrap.hidden = !/^[A-Za-z0-9_-]{20,}$/.test(venta.input.trim());
       linkNote.className = venta.input ? 'note ' + (x.url ? (x.warn ? 'warn' : 'ok') : 'err') : '';
-      linkNote.textContent = venta.input ? (x.url ? x.warn || '✓ Enlace listo. Toca "Probar enlace" y comprueba que abre la ventana de reseña del negocio correcto.' : x.warn) : '';
+      linkNote.textContent = venta.input
+        ? (x.url ? '✓ ' + [x.info, x.warn].filter(Boolean).join(' ') + ' Toca "Probar enlace" y comprueba que abre el negocio correcto.' : x.warn)
+        : '';
       [copyBtn, testBtn].forEach((b) => b.toggleAttribute('disabled', !x.url));
       writeBtn.toggleAttribute('disabled', !x.url || !Nfc.supported());
       qr.hidden = !x.url || !App.drawQr(qr, x.url);
@@ -148,20 +154,23 @@
         h('div', { class: 'card stat' }, h('b', null, left), h('span', null, 'Tarjetas en stock')),
         h('div', { class: 'card stat' }, h('b', null, money(today)), h('span', null, 'Vendido hoy')),
         h('div', { class: 'card stat' }, h('b', null, money(revenue)), h('span', null, soldCards + ' tarjeta(s) vendidas'))),
-      h('div', { class: 'card' }, h('h3', null, '1. Enlace de reseña del cliente'),
-        field('Enlace o Place ID', input, 'Pega el enlace de reseña del negocio o su Place ID (empieza con "ChIJ"). Si no lo tienes, mira las 3 formas abajo.'),
+      h('div', { class: 'card' }, h('h3', null, '1. Negocio y enlace de Google Maps'),
+        field('Nombre del negocio', client),
+        field('Enlace de Google Maps, de reseña o Place ID', input,
+          'Lo más fácil: abre el negocio en la app de Google Maps, toca Compartir, copia el enlace y pégalo aquí. Al tocar la tarjeta, el cliente ve la ficha con las estrellas.'),
+        modeWrap,
         h('div', { class: 'btns', style: 'margin-bottom:8px' },
           h('a', { class: 'btn small', href: 'https://developers.google.com/maps/documentation/places/web-service/place-id', target: '_blank', rel: 'noopener' }, '🔎 Buscar Place ID (herramienta de Google)')),
         linkNote,
         h('details', { style: 'margin-top:10px' }, h('summary', null, '¿Cómo consigo el enlace? (3 formas)'),
           h('ol', { class: 'steps' },
-            h('li', null, h('b', null, 'Place ID, desde tu celular (lo más rápido): '), 'toca "Buscar Place ID", escribe el nombre del negocio, copia el código que empieza con "ChIJ" y pégalo arriba. La app arma el enlace.'),
-            h('li', null, h('b', null, 'Que el dueño te lo mande, desde una computadora: '), 'business.google.com → ', h('b', null, 'Leer reseñas'), ' → ', h('b', null, 'Consigue más reseñas'), ' → ', h('b', null, 'Copiar'),
-              '. Según la ayuda de Google, ese enlace y su QR solo se generan en un navegador de computadora, no en el celular.'),
-            h('li', null, h('b', null, 'Plan B, enlace de Google Maps: '), 'en la app de Maps abre el negocio y toca Compartir. Funciona, pero abre la ficha del negocio y el cliente puede necesitar un toque más para escribir la reseña.')),
+            h('li', null, h('b', null, 'Enlace de Google Maps, desde tu celular (lo más fácil): '), 'abre el negocio en la app de Google Maps, toca ', h('b', null, 'Compartir'), ' y copia el enlace. El cliente verá la ficha del negocio con sus estrellas y toca para calificar.'),
+            h('li', null, h('b', null, 'Place ID: '), 'toca "Buscar Place ID", escribe el nombre del negocio, copia el código que empieza con "ChIJ" y pégalo arriba. La app arma el enlace a la ficha de Maps (o a la ventana de reseña directa, si lo eliges).'),
+            h('li', null, h('b', null, 'Enlace directo de reseña, que el dueño genera desde una computadora: '), 'business.google.com → ', h('b', null, 'Leer reseñas'), ' → ', h('b', null, 'Consigue más reseñas'), ' → ', h('b', null, 'Copiar'),
+              '. Según la ayuda de Google, ese enlace y su QR solo se generan en un navegador de computadora, no en el celular.')),
           h('div', { class: 'btns' }, h('button', { class: 'btn small', onclick: async () => {
-            const msg = 'Hola 👋 Soy de ' + (S.settings.sellerName || 'altoke.pe') + '. Para dejarte lista tu tarjeta de reseñas de Google necesito el enlace de reseñas de tu negocio. ' +
-              'Desde una computadora: entra a business.google.com → Leer reseñas → Consigue más reseñas → Copiar, y envíamelo por aquí. ' +
+            const msg = 'Hola 👋 Soy de ' + (S.settings.sellerName || 'altoke.pe') + '. Para dejarte lista tu tarjeta de reseñas necesito el enlace de tu negocio en Google Maps. ' +
+              'Ábrelo en la app de Google Maps, toca Compartir y envíamelo por aquí. ' +
               'Si prefieres, dime el nombre y la dirección del local y yo lo busco.';
             toast((await U.copy(msg)) ? 'Mensaje copiado ✓ (pégalo en WhatsApp)' : 'No se pudo copiar');
           } }, '📋 Copiar mensaje para pedirle el enlace al dueño')))),
@@ -174,8 +183,7 @@
         status,
         h('details', { style: 'margin-top:10px' }, h('summary', null, 'QR de respaldo (para celulares sin NFC)'), qr)),
       h('div', { class: 'card' }, h('h3', null, '3. Cobra y registra'),
-        h('div', { class: 'grid3' },
-          field('Cliente', client),
+        h('div', { class: 'grid2' },
           field('Cantidad de tarjetas', qty),
           field('Precio por tarjeta (S/)', price, 'Vacío = precio por defecto (S/ ' + shop.price + ')')),
         h('div', { class: 'grid2' }, field('Pago', method), h('div', { class: 'f' }, h('span', { style: 'font-size:13px;font-weight:600' }, 'Total a cobrar'), h('div', { style: 'font-size:26px;margin-top:6px' }, totalTxt))),
@@ -486,6 +494,9 @@
   };
 
   /* ---------- Atajos que usan otras pantallas (Menú, Mis tarjetas) ---------- */
+  // Herramientas compartidas con el módulo ⭐ Reseñas (views-resenas.js)
+  App._t = { writeRecords, prefs, optionsRow, pushLog, unsupportedNote, cardDatalist, money, fmtDate, getLastSerial: () => lastSerial };
+
   App.addRecord = (kind) => { draft.records.push(newRec(kind)); go('escribir'); };
   App.prepWrite = (cardName) => { draft.cardName = cardName || ''; go('escribir'); };
   App.prepSale = (cardName, url) => { venta.cardName = cardName || ''; if (url && /^https?:\/\//i.test(url)) venta.input = url; go('venta'); };

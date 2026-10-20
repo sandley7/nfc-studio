@@ -9,6 +9,9 @@
   // status: ok = disponible · android = necesita Android + Chrome para escribir/leer · exp = experimental · no = no existe en web
   const SECTIONS = [
     { name: 'Empieza aquí', open: true, items: [
+      { icon: '⭐', title: 'Reseñas: configurar cada tarjeta paso a paso (lo principal)', status: 'ok', act: view('resenas'),
+        desc: 'Nombre de la tarjeta → negocio y enlace de Google Maps → escribir → probar como cliente → entregar y cobrar. Todo en una sola pantalla, con la lista de tus tarjetas de reseñas.',
+        use: 'El cliente toca la tarjeta, se abre el negocio en Google Maps y califica con las 5 estrellas.' },
       { icon: '⚡', title: 'Venta rápida', status: 'ok', act: view('venta'),
         desc: 'Pega el enlace de reseña de tu cliente, programa la tarjeta, cobra y registra la venta en un solo lugar.',
         use: 'Estás frente al dueño de una pollería: en 2 minutos la tarjeta ya funciona y la venta queda anotada.' },
@@ -35,7 +38,7 @@
     ] },
     { name: 'Escribir: tipos de registro (como "Write → Añadir un registro")', items: [
       { icon: '⭐', title: 'Reseña de Google', status: 'android', act: rec('review'), actLabel: 'Añadir',
-        desc: 'Abre la ventana para dejar una reseña del negocio. Acepta el enlace corto de Google o el Place ID y arma el enlace.',
+        desc: 'Abre la ficha del negocio en Google Maps (donde se ven y se tocan las 5 estrellas) o, si prefieres, la ventana de reseña directa. Acepta el enlace de Compartir de Maps, el enlace de reseña o el Place ID.',
         use: 'Tarjeta en la caja de una cevichería.' },
       { icon: '🍽️', title: 'Página del restaurante', status: 'android', act: rec('page'), actLabel: 'Añadir',
         desc: 'Abre la página del local con su carta, el botón de reseña, WhatsApp, Instagram y mapa. Puedes cambiar la carta sin reprogramar.',
@@ -105,7 +108,7 @@
         desc: 'NFC Tools puede ejecutar acciones del celular al leer una tarjeta (más de 200, según su ficha). Una web no puede controlar el celular.',
         alt: 'Usa la pestaña Tasks de NFC Tools.' },
     ] },
-    { name: 'Negocio', items: [
+    { name: 'Menús digitales (para después, cuando el negocio crezca)', items: [
       { icon: '🍴', title: 'Restaurantes', status: 'ok', act: view('restaurantes'), desc: 'Datos de cada local: nombre, enlace de reseña, WhatsApp, Instagram, color y logo.' },
       { icon: '📖', title: 'Carta digital', status: 'ok', act: view('carta'), desc: 'Platos, precios y fotos. Hay "Pegar carta rápida" para cargar muchos platos de una vez.' },
       { icon: '📱', title: 'Vista previa', status: 'ok', act: view('vista'), desc: 'Así ve el cliente la página del restaurante al tocar la tarjeta.' },

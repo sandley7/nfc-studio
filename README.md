@@ -19,14 +19,15 @@ Después de la primera carga funciona sin internet. En el Menú hay un QR para p
 
 ## Qué incluye
 
+- **⭐ Reseñas (lo principal):** módulo aparte para configurar cada tarjeta paso a paso: nombre de la tarjeta → negocio y enlace de Google Maps → escribir → probar como cliente → entregar y cobrar. El cliente toca la tarjeta, se abre el negocio en Google Maps y califica con las 5 estrellas. Incluye la lista de tus tarjetas de reseñas con su estado, QR de respaldo y un mensaje de WhatsApp para pedirle el enlace al dueño.
 - **🏠 Menú:** todas las funciones de NFC Tools explicadas, con ejemplos y con su estado en esta app (disponible, experimental o no disponible en web). Con buscador.
-- **⚡ Venta rápida:** pega el enlace de reseña o el Place ID del cliente, programa la tarjeta, cobra (Yape, Plin, efectivo) y registra la venta. Stock, ventas del día y CSV.
+- **⚡ Venta rápida:** pega el enlace de Google Maps, de reseña o el Place ID del cliente, programa la tarjeta, cobra (Yape, Plin, efectivo) y registra la venta. Stock, ventas del día y CSV.
 - **📇 Mis tarjetas:** nombre de cada tarjeta física (lotes, "Mesa 1…12"), estado en stock / programada / vendida, cliente y notas.
 - **📡 Leer:** número de serie, registros y tamaño; reconoce tus tarjetas por su número de serie.
 - **✍️ Escribir:** varios registros por tarjeta (reseña de Google, página del restaurante, URL, texto, teléfono, SMS, email, WhatsApp, Instagram, ubicación, contacto, Wi-Fi, MIME). Calcula el tamaño exacto frente a NTAG213/215/216, verifica después de escribir y suma el número en cada tarjeta.
 - **🧰 Otros:** borrar, bloquear, copiar tarjeta y diagnóstico del equipo.
 - **📁 Mis tareas:** plantillas e historial.
-- **Negocio:** restaurantes, carta digital, vista previa y un ZIP con las páginas de cada local para publicar gratis.
+- **Menús digitales (para después):** restaurantes, carta digital, vista previa y un ZIP con las páginas de cada local para publicar gratis. Queda guardado y funcionando para cuando el negocio crezca.
 
 ## Qué puede y qué no puede (importante)
 
@@ -56,6 +57,7 @@ python -m http.server 5173
 | `js/core.js` | Estado, navegación, inventario de tarjetas, instalación |
 | `js/views-menu.js` | Menú detallado |
 | `js/views-tarjetas.js` | Venta rápida, Leer, Escribir, Otros, Mis tareas |
+| `js/views-resenas.js` | ⭐ Reseñas: configurador paso a paso de tarjetas de reseñas |
 | `js/views-cards.js` | Mis tarjetas (inventario) |
 | `js/views-negocio.js` | Restaurantes, Carta, Vista previa, Publicar, Ayuda |
 | `js/site.js`, `js/zip.js` | Página pública de cada restaurante y ZIP del sitio |
