@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 130" role="img" aria-label="altoke.pe">
+  <g transform="translate(5 5) scale(1.2)">
+    <rect width="100" height="100" rx="22" fill="#c2410c"/>
+    <polygon points="46,14 22,54 38,54 31,86 58,44 42,44" fill="#fff"/>
+    <g fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round">
+      <path d="M66.03 41.38A14 14 0 0 1 66.03 58.62"/>
+      <path d="M72.34 36.45A22 22 0 0 1 72.34 63.55"/>
+      <path d="M78.64 31.52A30 30 0 0 1 78.64 68.48"/>
+    </g>
+  </g>
+  <text x="145" y="84" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="66" font-weight="800" letter-spacing="-1.5" fill="#1f1b16">altoke<tspan fill="#c2410c">.pe</tspan></text>
+</svg>

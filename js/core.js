@@ -10,8 +10,8 @@
   App.onChange = null; // hook de la vista activa (p. ej. refrescar la vista previa)
 
   const defaultState = () => ({
-    version: 2,
-    settings: { baseUrl: '', sellerName: '', sellerWa: '', showCredit: true },
+    version: 3,
+    settings: { baseUrl: '', sellerName: 'altoke.pe', sellerWa: '', showCredit: true },
     shop: { stock: 30, price: 25 }, // lote de tarjetas y precio por defecto: ajústalos en Venta rápida
     sales: [],
     tasks: [],
@@ -32,8 +32,12 @@
 
   App.setState = (d) => {
     const base = defaultState();
+    const oldVersion = (d && d.version) || 3;
     const S = Object.assign(base, d);
     S.settings = Object.assign(base.settings, S.settings);
+    // Datos guardados antes de la marca altoke.pe: ponerla como nombre de la empresa si estaba vacío
+    if (oldVersion < 3 && !S.settings.sellerName) S.settings.sellerName = 'altoke.pe';
+    S.version = 3;
     S.shop = Object.assign(defaultState().shop, S.shop);
     S.ui = Object.assign(defaultState().ui, S.ui);
     ['sales', 'tasks', 'log', 'cards', 'restaurants'].forEach((k) => { if (!Array.isArray(S[k])) S[k] = []; });
@@ -148,7 +152,10 @@
 
   function renderNav() {
     const nav = document.getElementById('nav');
-    const kids = [h('div', { class: 'brand' }, 'NFC Studio', h('small', null, 'Leer · Escribir · Vender'))];
+    const kids = [h('div', { class: 'brand' },
+      h('img', { src: 'icon-192.png', alt: '', width: 32, height: 32 }),
+      h('span', { class: 'bname' }, 'altoke', h('span', { class: 'tld' }, '.pe')),
+      h('small', null, 'Tarjetas NFC al toque'))];
     let group = null;
     for (const [id, ico, label, g] of NAV) {
       if (g !== group) { group = g; if (g) kids.push(h('div', { class: 'grp' }, g)); else kids.push(h('div', { class: 'grp' }, '')); }

@@ -143,7 +143,7 @@
     const web = /^https?:$/.test(location.protocol);
     let body;
     if (App.isStandalone()) {
-      body = h('div', { class: 'note ok' }, '✓ Ya estás usando NFC Studio como app.');
+      body = h('div', { class: 'note ok' }, '✓ Ya estás usando altoke.pe como app.');
     } else if (App.installEvt) {
       body = h('div', null, h('p', { style: 'margin:0 0 10px' }, 'Quedará como una app más en tu celular, abre sin barra del navegador y funciona sin internet.'),
         h('button', { class: 'btn primary', onclick: async () => { toast((await App.install()) ? 'Instalando…' : 'Instalación cancelada'); } }, '📲 Instalar app'));
@@ -159,7 +159,7 @@
     }
     const qr = h('canvas', { class: 'qr', 'aria-label': 'Código QR de la app' });
     const hasQr = web && App.drawQr(qr, url);
-    return h('div', { class: 'card' }, h('h3', null, '📲 Instalar NFC Studio como app'), body,
+    return h('div', { class: 'card' }, h('h3', null, '📲 Instalar altoke.pe como app'), body,
       hasQr ? h('details', { style: 'margin-top:12px' }, h('summary', null, 'Pasar la app a otro celular (QR)'),
         h('p', { class: 'sub', style: 'margin:0 0 8px' }, 'Escanea este QR con la cámara del otro celular y sigue los mismos pasos.'), qr,
         h('div', { class: 'btns', style: 'margin-top:8px' }, h('button', { class: 'btn small', onclick: async () => toast((await U.copy(url)) ? 'Enlace copiado ✓' : 'No se pudo copiar') }, '📋 Copiar enlace'))) : null);

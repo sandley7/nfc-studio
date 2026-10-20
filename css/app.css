@@ -284,3 +284,10 @@ details.msec[open] > .mrow:last-child { margin-bottom: 8px; }
   .mrow .mbody { flex: 1 1 calc(100% - 50px); }
   .mrow > .btn { flex: 0 0 auto; }
 }
+
+/* ---- Marca altoke.pe ---- */
+.brand { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.brand img { border-radius: 8px; }
+.brand .bname { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.brand .tld { color: #fb923c; }
+.brand small { flex-basis: 100%; }

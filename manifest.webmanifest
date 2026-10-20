@@ -1,6 +1,6 @@
 {
-  "name": "NFC Studio",
-  "short_name": "NFC Studio",
+  "name": "altoke.pe · Tarjetas NFC al toque",
+  "short_name": "altoke.pe",
   "description": "Leer, escribir y vender tarjetas NFC de reseñas, con carta digital para restaurantes.",
   "lang": "es",
   "start_url": "./index.html",

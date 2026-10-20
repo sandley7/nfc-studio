@@ -1,4 +1,6 @@
-# NFC Studio
+<p align="center"><img src="logo.svg" alt="altoke.pe" width="320"></p>
+
+# altoke.pe · Tarjetas NFC al toque
 
 App web instalable (PWA) para **leer, escribir y vender tarjetas NFC** de reseñas de Google, con carta digital para restaurantes. Sigue el esquema de [NFC Tools](https://www.wakdev.com/en/apps/nfc-tools.html) (Leer, Escribir, Otros, Mis tareas), con cada función explicada en español y con inventario con nombre para cada tarjeta.
 
@@ -59,6 +61,7 @@ python -m http.server 5173
 | `js/site.js`, `js/zip.js` | Página pública de cada restaurante y ZIP del sitio |
 | `js/store.js`, `js/util.js`, `js/main.js` | Guardado local (IndexedDB), utilidades, arranque |
 | `sw.js`, `manifest.webmanifest` | Instalación y uso sin internet |
+| `logo.svg`, `icon.svg`, `icon-*.png` | Logo de altoke.pe: un rayo ("al toque") con ondas NFC |
 
 Los datos (restaurantes, ventas, tarjetas) viven solo en el dispositivo; usa "Descargar respaldo" en Negocio → Publicar para guardarlos y pasarlos de un equipo a otro.
 
