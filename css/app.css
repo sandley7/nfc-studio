@@ -291,3 +291,10 @@ details.msec[open] > .mrow:last-child { margin-bottom: 8px; }
 .brand .bname { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
 .brand .tld { color: #fb923c; }
 .brand small { flex-basis: 100%; }
+
+/* Cifras de Reseñas: 4 en una fila */
+.grid4.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.grid4.stats .card { padding: 12px 4px; margin-bottom: 14px; text-align: center; }
+.grid4.stats .stat b { font-size: 22px; display: block; }
+.grid4.stats .stat span { font-size: 12px; color: var(--muted); }
+@media (max-width: 860px) { .grid4.stats { gap: 6px; } .grid4.stats .stat b { font-size: 18px; } .grid4.stats .stat span { font-size: 11px; } }

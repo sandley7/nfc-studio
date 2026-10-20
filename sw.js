@@ -1,7 +1,7 @@
 // Service worker de altoke.pe.
 // - Archivos propios: primero red (así ves los cambios apenas vuelves a subir la app), y si no hay internet, copia guardada.
 // - Generador de QR (cdnjs): copia guardada primero.
-const V = 'altoke-v7';
+const V = 'altoke-v8';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest',
   'js/util.js', 'js/store.js', 'js/zip.js', 'js/site.js', 'js/nfc.js', 'js/core.js',
@@ -10,7 +10,8 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(V).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache: 'reload' = bajar siempre la copia nueva del servidor al guardar la app para uso sin internet
+  e.waitUntil(caches.open(V).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -25,8 +26,9 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
 
   if (url.origin === location.origin) {
+    // cache: 'no-cache' = revalidar siempre con el servidor, para no mezclar versiones por la caché HTTP (GitHub Pages guarda ~10 min)
     e.respondWith(
-      fetch(req)
+      fetch(req, { cache: 'no-cache' })
         .then((res) => {
           if (res.ok) { const copy = res.clone(); caches.open(V).then((c) => c.put(req, copy)); }
           return res;

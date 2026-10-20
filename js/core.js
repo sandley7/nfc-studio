@@ -10,9 +10,9 @@
   App.onChange = null; // hook de la vista activa (p. ej. refrescar la vista previa)
 
   const defaultState = () => ({
-    version: 3,
+    version: 4,
     settings: { baseUrl: '', sellerName: 'altoke.pe', sellerWa: '', showCredit: true },
-    shop: { stock: 30, price: 25 }, // lote de tarjetas y precio por defecto: ajústalos en Venta rápida
+    shop: { stock: 200, price: 20 }, // lote de tarjetas y precio por defecto (datos del dueño): se ajustan en Reseñas o Venta rápida
     sales: [],
     tasks: [],
     log: [],
@@ -37,8 +37,10 @@
     S.settings = Object.assign(base.settings, S.settings);
     // Datos guardados antes de la marca altoke.pe: ponerla como nombre de la empresa si estaba vacío
     if (oldVersion < 3 && !S.settings.sellerName) S.settings.sellerName = 'altoke.pe';
-    S.version = 3;
     S.shop = Object.assign(defaultState().shop, S.shop);
+    // Lote y precio que dijo el dueño (200 tarjetas a S/ 20): solo se cambian si nunca los tocó (valores iniciales anteriores: 30 y 25)
+    if (oldVersion < 4 && S.shop.stock === 30 && S.shop.price === 25) { S.shop.stock = 200; S.shop.price = 20; App.lotMigrated = true; }
+    S.version = 4;
     S.ui = Object.assign(defaultState().ui, S.ui);
     ['sales', 'tasks', 'log', 'cards', 'restaurants'].forEach((k) => { if (!Array.isArray(S[k])) S[k] = []; });
     if (!['inicio', 'resenas', 'venta', 'tarjetas', 'leer', 'escribir', 'otros', 'tareas', 'restaurantes', 'carta', 'vista', 'publicar', 'ayuda'].includes(S.ui.view)) S.ui.view = 'inicio';
@@ -179,6 +181,11 @@
     const saved = await Store.load();
     App.setState(saved && Array.isArray(saved.restaurants) ? saved : {});
     App.render();
+    if (App.lotMigrated) {
+      App.lotMigrated = false;
+      App.touch();
+      App.toast('Actualicé tu lote a 200 tarjetas y el precio por defecto a S/ 20');
+    }
   };
 
   /* ---------- Inventario: cada tarjeta física con su nombre ---------- */

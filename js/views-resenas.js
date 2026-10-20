@@ -44,7 +44,7 @@
     const currentCard = () => (form.id ? S.cards.find((k) => k.id === form.id) : null);
     let curUrl = '';
 
-    const stats = h('div', { class: 'grid3 stats' });
+    const stats = h('div', { class: 'grid4 stats' });
     const list = h('div');
     const testBox = h('div');
     const linkNote = h('div');
@@ -145,7 +145,9 @@
 
     function renderStats() {
       const rc = reviewCards();
+      const left = Math.max(0, S.shop.stock - S.sales.reduce((n, s) => n + s.qty, 0)); // lote − tarjetas vendidas
       stats.replaceChildren(
+        stat(left, 'En stock'),
         stat(rc.filter((c) => c.url || c.content).length, 'Configuradas'),
         stat(rc.filter((c) => c.tested === true).length, 'Probadas ✓'),
         stat(rc.filter((c) => c.status === 'vendida').length, 'Vendidas'));
@@ -273,7 +275,14 @@
         h('div', { class: 'grid2' }, field('Precio (S/)', priceIn, 'Vacío = precio por defecto (S/ ' + S.shop.price + ')'), field('Pago', methodSel)),
         h('button', { class: 'btn primary', onclick: register }, '✓ Registrar venta de esta tarjeta')),
 
-      h('div', { class: 'card' }, h('h3', null, 'Mis tarjetas de reseñas'), list));
+      h('div', { class: 'card' }, h('h3', null, 'Mis tarjetas de reseñas'), list),
+
+      h('div', { class: 'card' }, h('h3', null, 'Tu lote'),
+        h('p', { class: 'sub', style: 'margin:0 0 10px' }, 'En stock = tarjetas del lote − tarjetas vendidas.'),
+        h('div', { class: 'grid2' },
+          field('Tarjetas del lote', h('input', { type: 'number', min: 0, value: S.shop.stock, onchange: (e) => { S.shop.stock = Math.max(0, parseInt(e.target.value, 10) || 0); touch(); App.render(); } })),
+          field('Precio por defecto (S/)', h('input', { type: 'text', inputmode: 'decimal', value: S.shop.price,
+            onchange: (e) => { const v = U.price(e.target.value); S.shop.price = v == null ? S.shop.price : v; touch(); App.render(); } }), 'Se usa en el paso 5 si dejas el precio vacío.'))));
 
     renderAll();
     update();
