@@ -85,7 +85,7 @@
                 logoInput)))),
         h('div', { class: 'card' }, h('h3', null, 'Contacto y reseñas'),
           field('Enlace de reseña de Google', bind(r, 'reviewUrl', { type: 'url', placeholder: 'https://g.page/r/…/review' }, checkRev),
-            'En Google Business Profile → "Pedir reseñas" → copiar enlace. O usa el Place ID aquí abajo.'),
+            'Desde una computadora: business.google.com → Leer reseñas → Consigue más reseñas → Copiar. O usa el Place ID aquí abajo.'),
           revNote,
           h('div', { class: 'row' },
             field('Place ID (alternativa)', placeIn),

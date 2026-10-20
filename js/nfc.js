@@ -69,8 +69,8 @@
     if (/^https?:\/\//i.test(v) || /^(g\.page|maps\.app\.goo\.gl|goo\.gl|search\.google\.com|(www\.)?google\.[a-z.]+)\//i.test(v)) {
       const u = U.safeUrl(/^https?:/i.test(v) ? v : 'https://' + v);
       if (!u) return { url: '', warn: 'Enlace no válido' };
-      const maps = /(^|\.)maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps/i.test(u);
-      return { url: u, warn: maps ? 'Este enlace abre la ficha del mapa, no la ventana de reseña. Mejor usa g.page/r/…/review o el Place ID.' : '' };
+      const maps = /maps\.app\.goo\.gl|goo\.gl\/maps|google\.[a-z.]+\/maps/i.test(u);
+      return { url: u, warn: maps ? 'Este enlace abre la ficha del negocio en Maps, no directo la ventana de reseña: el cliente puede necesitar un toque más. Lo ideal es el Place ID o el enlace de reseña.' : '' };
     }
     if (/^[A-Za-z0-9_-]{20,}$/.test(v)) return { url: 'https://search.google.com/local/writereview?placeid=' + v, warn: '' };
     return { url: '', warn: 'No parece un enlace ni un Place ID' };

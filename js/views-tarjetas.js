@@ -149,11 +149,22 @@
         h('div', { class: 'card stat' }, h('b', null, money(today)), h('span', null, 'Vendido hoy')),
         h('div', { class: 'card stat' }, h('b', null, money(revenue)), h('span', null, soldCards + ' tarjeta(s) vendidas'))),
       h('div', { class: 'card' }, h('h3', null, '1. Enlace de reseña del cliente'),
-        field('Enlace o Place ID', input,
-          'Lo más rápido: que el dueño te envíe por WhatsApp su enlace (Perfil de Negocio de Google → "Pedir reseñas" → compartir). Si no lo tiene, busca su Place ID:'),
+        field('Enlace o Place ID', input, 'Pega el enlace de reseña del negocio o su Place ID (empieza con "ChIJ"). Si no lo tienes, mira las 3 formas abajo.'),
         h('div', { class: 'btns', style: 'margin-bottom:8px' },
           h('a', { class: 'btn small', href: 'https://developers.google.com/maps/documentation/places/web-service/place-id', target: '_blank', rel: 'noopener' }, '🔎 Buscar Place ID (herramienta de Google)')),
-        linkNote),
+        linkNote,
+        h('details', { style: 'margin-top:10px' }, h('summary', null, '¿Cómo consigo el enlace? (3 formas)'),
+          h('ol', { class: 'steps' },
+            h('li', null, h('b', null, 'Place ID, desde tu celular (lo más rápido): '), 'toca "Buscar Place ID", escribe el nombre del negocio, copia el código que empieza con "ChIJ" y pégalo arriba. La app arma el enlace.'),
+            h('li', null, h('b', null, 'Que el dueño te lo mande, desde una computadora: '), 'business.google.com → ', h('b', null, 'Leer reseñas'), ' → ', h('b', null, 'Consigue más reseñas'), ' → ', h('b', null, 'Copiar'),
+              '. Según la ayuda de Google, ese enlace y su QR solo se generan en un navegador de computadora, no en el celular.'),
+            h('li', null, h('b', null, 'Plan B, enlace de Google Maps: '), 'en la app de Maps abre el negocio y toca Compartir. Funciona, pero abre la ficha del negocio y el cliente puede necesitar un toque más para escribir la reseña.')),
+          h('div', { class: 'btns' }, h('button', { class: 'btn small', onclick: async () => {
+            const msg = 'Hola 👋 Soy de ' + (S.settings.sellerName || 'altoke.pe') + '. Para dejarte lista tu tarjeta de reseñas de Google necesito el enlace de reseñas de tu negocio. ' +
+              'Desde una computadora: entra a business.google.com → Leer reseñas → Consigue más reseñas → Copiar, y envíamelo por aquí. ' +
+              'Si prefieres, dime el nombre y la dirección del local y yo lo busco.';
+            toast((await U.copy(msg)) ? 'Mensaje copiado ✓ (pégalo en WhatsApp)' : 'No se pudo copiar');
+          } }, '📋 Copiar mensaje para pedirle el enlace al dueño')))),
       cardDatalist(),
       h('div', { class: 'card' }, h('h3', null, '2. Programa la tarjeta'),
         field('Nombre de la tarjeta', cardIn, 'Para reconocerla después (ej. "Pollería Rey - Caja"). Vacío = la siguiente del stock.'),
