@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NFC Studio</title>
+  <meta name="theme-color" content="#c2410c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="NFC Studio">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="shell">
+    <nav id="nav" aria-label="Menú principal"></nav>
+    <main id="main"></main>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Generador de QR (solo para el QR de respaldo). Si no carga, el resto de la app sigue funcionando. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/zip.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/nfc.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/views-negocio.js"></script>
+  <script src="js/views-tarjetas.js"></script>
+  <script src="js/views-cards.js"></script>
+  <script src="js/views-menu.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
