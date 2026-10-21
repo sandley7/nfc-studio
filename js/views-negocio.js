@@ -246,7 +246,23 @@
         h('p', { class: 'sub', style: 'margin-bottom:10px' }, 'Tus datos viven en este navegador. Descarga un respaldo de vez en cuando; también sirve para pasar tu trabajo de la PC al celular.'),
         h('div', { class: 'btns' },
           h('button', { class: 'btn', onclick: () => U.download('nfc-studio-respaldo-' + new Date().toISOString().slice(0, 10) + '.json', new Blob([JSON.stringify(S)], { type: 'application/json' })) }, '⬇️ Descargar respaldo'),
-          h('button', { class: 'btn', onclick: () => restore.click() }, '⬆️ Restaurar respaldo'), restore)));
+          h('button', { class: 'btn', onclick: () => restore.click() }, '⬆️ Restaurar respaldo'), restore),
+        (() => {
+          const box = h('textarea', { rows: 4, placeholder: 'Pega aquí el texto del respaldo…', 'aria-label': 'Texto del respaldo' });
+          return h('details', { style: 'margin-top:12px' }, h('summary', null, 'Copiar y pegar como texto (si el iPhone no deja descargar el archivo)'),
+            h('p', { class: 'sub', style: 'margin:0 0 8px' }, 'Sirve para pasar tus datos a otra dirección de la app (por ejemplo, otra cuenta de GitHub). Copia el texto aquí, pégalo en Notas o en un mensaje a ti mismo, y pégalo en la app nueva.'),
+            h('div', { class: 'btns', style: 'margin-bottom:8px' },
+              h('button', { class: 'btn small', onclick: async () => toast((await U.copy(JSON.stringify(S))) ? 'Respaldo copiado ✓ (pégalo en Notas o en un mensaje a ti mismo)' : 'No se pudo copiar') }, '📋 Copiar respaldo como texto')),
+            box,
+            h('div', { class: 'btns', style: 'margin-top:8px' }, h('button', { class: 'btn small', onclick: () => {
+              try {
+                const d = JSON.parse(box.value.trim());
+                if (!d || !Array.isArray(d.restaurants)) throw new Error('El texto no es un respaldo válido');
+                if (!confirm('Esto reemplaza todos los datos actuales por los del respaldo. ¿Continuar?')) return;
+                App.setState(d); touch(); App.saveNow(); toast('Respaldo restaurado ✓'); App.render();
+              } catch (err) { toast(err instanceof SyntaxError ? 'El texto no es un respaldo válido' : err.message); }
+            } }, '⬆️ Restaurar desde el texto pegado')));
+        })()));
   };
 
   /* ---------- Ayuda ---------- */

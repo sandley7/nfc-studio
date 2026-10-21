@@ -65,6 +65,6 @@ python -m http.server 5173
 | `sw.js`, `manifest.webmanifest` | Instalación y uso sin internet |
 | `logo.svg`, `icon.svg`, `icon-*.png` | Logo de altoke.pe: un rayo ("al toque") con ondas NFC |
 
-Los datos (restaurantes, ventas, tarjetas) viven solo en el dispositivo; usa "Descargar respaldo" en Negocio → Publicar para guardarlos y pasarlos de un equipo a otro.
+Los datos (restaurantes, ventas, tarjetas) viven solo en el dispositivo; usa "Descargar respaldo" (o "Copiar respaldo como texto", útil en iPhone) en Negocio → Publicar para guardarlos y pasarlos de un equipo o de una dirección de la app a otra. Cada dirección web tiene su propio almacenamiento: si cambias de cuenta de GitHub, la app nueva empieza vacía hasta que restaures el respaldo.
 
 El generador de QR (`qrcode-generator`) se carga desde cdnjs.
