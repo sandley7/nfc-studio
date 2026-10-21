@@ -125,7 +125,7 @@
       const sold = App.cards.sell(c.name, 1, { client, price: unit, content: x.url });
       S.sales.push({ id: U.uid(), at: Date.now(), client, qty: 1, unit, total: +unit.toFixed(2), method: form.method, url: x.url, cards: sold.map((k) => k.name) });
       t.pushLog(client + ' — ' + sold.map((k) => k.name).join(', '), x.url || '(sin enlace)', 'venta');
-      touch(); toast('Venta registrada ✓'); resetForm(); App.render();
+      touch(); App.saveNow(); toast('Venta registrada ✓ (la ves abajo, en "Ventas")'); resetForm(); App.render();
     };
 
     /* ---------- Actualizaciones de pantalla ---------- */
@@ -184,7 +184,8 @@
         h('div', { class: 'rechead' }, h('b', null, c.name), h('span', { class: 'chip ' + cls }, label)),
         c.business || c.client ? h('div', null, '🏪 ' + (c.business || c.client)) : null,
         url ? h('div', { class: 'mono cc' }, url) : null,
-        h('div', { class: 'cinfo' }, [c.serial && '🆔 ' + c.serial, c.programmedAt && '✍️ ' + t.fmtDate(c.programmedAt), c.testedAt && (c.tested ? '✓ probada ' : '✗ prueba ') + t.fmtDate(c.testedAt)].filter(Boolean).join(' · ')),
+        h('div', { class: 'cinfo' }, [c.serial && '🆔 ' + c.serial, c.programmedAt && '✍️ ' + t.fmtDate(c.programmedAt), c.testedAt && (c.tested ? '✓ probada ' : '✗ prueba ') + t.fmtDate(c.testedAt),
+          c.soldAt && '💰 vendida ' + t.fmtDate(c.soldAt) + (c.price != null && c.price !== '' ? ' · ' + t.money(c.price) : '')].filter(Boolean).join(' · ')),
         h('div', { class: 'btns', style: 'margin-top:8px' },
           h('button', { class: 'btn small', onclick: () => {
             Object.assign(form, { id: c.id, name: c.name, business: c.business || c.client || '', input: c.input || c.url || c.content || '', mode: c.mode || 'maps', price: '', method: 'Yape' });
@@ -276,6 +277,18 @@
         h('button', { class: 'btn primary', onclick: register }, '✓ Registrar venta de esta tarjeta')),
 
       h('div', { class: 'card' }, h('h3', null, 'Mis tarjetas de reseñas'), list),
+
+      h('div', { class: 'card' }, h('h3', null, 'Ventas'),
+        S.sales.length === 0
+          ? h('p', { class: 'sub' }, 'Aún no hay ventas registradas en este dispositivo.')
+          : [h('p', { class: 'sub', style: 'margin:0 0 6px' }, S.sales.length + ' venta(s) · total ' + t.money(S.sales.reduce((n, s) => n + s.total, 0))),
+            S.sales.slice(-10).reverse().map((s) => h('div', { class: 'step' },
+              h('span', { class: 'grow' }, h('b', null, s.client), h('br'),
+                h('span', { style: 'color:var(--muted);font-size:13px' }, t.fmtDate(s.at) + ' · ' + s.qty + ' × ' + t.money(s.unit) + ' · ' + s.method + (s.cards && s.cards.length ? ' · 📇 ' + s.cards.join(', ') : ''))),
+              h('b', null, t.money(s.total))))],
+        h('p', { class: 'sub', style: 'margin:10px 0 6px;font-size:13px' }, 'Tus datos se guardan solo en este dispositivo y en esta app (la instalada en la pantalla de inicio y Safari guardan por separado). Descarga un respaldo de vez en cuando.'),
+        h('div', { class: 'btns' },
+          h('button', { class: 'btn small', onclick: () => U.download('altoke-respaldo-' + new Date().toISOString().slice(0, 10) + '.json', new Blob([JSON.stringify(S)], { type: 'application/json' })) }, '⬇️ Descargar respaldo (ventas, tarjetas y todo)'))),
 
       h('div', { class: 'card' }, h('h3', null, 'Tu lote'),
         h('p', { class: 'sub', style: 'margin:0 0 10px' }, 'En stock = tarjetas del lote − tarjetas vendidas.'),

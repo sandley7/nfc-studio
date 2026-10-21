@@ -21,14 +21,31 @@
     ui: { view: 'resenas', rid: null },
   });
 
-  App.touch = function touch() {
+  let dirty = false;
+
+  // Guarda ya mismo (sin esperar). Se usa al registrar ventas y cuando la app pasa a segundo plano.
+  App.saveNow = async function saveNow() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-      const ok = await Store.save(App.S);
-      if (!ok) App.toast('⚠️ No se pudo guardar en este navegador. Descarga un respaldo.');
-    }, 350);
+    if (!dirty) return true;
+    dirty = false;
+    const ok = await Store.save(App.S);
+    if (!ok) {
+      dirty = true;
+      App.toast('⚠️ No se pudo guardar en este navegador. Descarga un respaldo.');
+    }
+    return ok;
+  };
+
+  App.touch = function touch() {
+    dirty = true;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(App.saveNow, 350);
     if (App.onChange) App.onChange();
   };
+
+  // En iPhone la app se suspende al cambiar de aplicación (por ejemplo a NFC Tools): guardar antes de salir.
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') App.saveNow(); });
+  window.addEventListener('pagehide', () => { App.saveNow(); });
 
   App.setState = (d) => {
     const base = defaultState();
@@ -178,6 +195,8 @@
   };
 
   App.start = async () => {
+    // Pedir almacenamiento persistente (el navegador puede aceptarlo o no) para que no borre los datos por falta de espacio
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* sin efecto */ }
     const saved = await Store.load();
     App.setState(saved && Array.isArray(saved.restaurants) ? saved : {});
     App.render();

@@ -12,20 +12,26 @@
     });
   }
 
+  function fromLocalStorage() {
+    try {
+      return JSON.parse(localStorage.getItem(DB) || 'null');
+    } catch (_) {
+      return null;
+    }
+  }
+
   async function load() {
     try {
       const db = await open();
-      return await new Promise((res, rej) => {
+      const v = await new Promise((res, rej) => {
         const q = db.transaction(ST).objectStore(ST).get('state');
         q.onsuccess = () => res(q.result || null);
         q.onerror = () => rej(q.error);
       });
+      // Si IndexedDB está vacío pero hubo un guardado de respaldo en localStorage, usarlo
+      return v || fromLocalStorage();
     } catch (e) {
-      try {
-        return JSON.parse(localStorage.getItem(DB) || 'null');
-      } catch (_) {
-        return null;
-      }
+      return fromLocalStorage();
     }
   }
 

@@ -138,7 +138,7 @@
       S.sales.push({ id: U.uid(), at: Date.now(), client: name, qty: q, unit: u, total: +(q * u).toFixed(2), method: venta.method, url: curUrl, cards: sold });
       pushLog(name + ' — ' + sold.join(', '), curUrl || '(sin programar)', 'venta');
       Object.assign(venta, { input: '', client: '', qty: 1, price: '', cardName: '' });
-      touch(); toast('Venta registrada ✓'); App.render();
+      touch(); App.saveNow(); toast('Venta registrada ✓'); App.render();
     };
 
     const exportCsv = () => {

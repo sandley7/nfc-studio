@@ -242,6 +242,7 @@
           h('li', null, 'Android (Samsung, etc.): ábrela en Chrome → menú ⋮ → ', h('b', null, 'Instalar app'), '.'),
           h('li', null, 'Usa siempre el ícono instalado. Esa app guarda sus datos aparte del navegador, así que si la ves vacía, restaura tu respaldo (abajo).'))),
       h('div', { class: 'card' }, h('h3', null, 'Respaldo de tus datos'),
+        h('div', { class: 'note' }, 'En este dispositivo ahora hay: ' + S.sales.length + ' venta(s), ' + S.cards.length + ' tarjeta(s) en el inventario y ' + S.restaurants.length + ' restaurante(s).'),
         h('p', { class: 'sub', style: 'margin-bottom:10px' }, 'Tus datos viven en este navegador. Descarga un respaldo de vez en cuando; también sirve para pasar tu trabajo de la PC al celular.'),
         h('div', { class: 'btns' },
           h('button', { class: 'btn', onclick: () => U.download('nfc-studio-respaldo-' + new Date().toISOString().slice(0, 10) + '.json', new Blob([JSON.stringify(S)], { type: 'application/json' })) }, '⬇️ Descargar respaldo'),
